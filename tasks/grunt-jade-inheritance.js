@@ -8,16 +8,7 @@ module.exports = function(grunt) {
   var JadeInheritance = require('jade-inheritance');
 
   module.exports = function(grunt) {
-    //var config = grunt.config('jade.compile.files')[0];
-
-    //if (!config) throw ('Require jade task and propper task architecture');
-
-    var
-    //baseDir = config.cwd,
-    //src = config.src,
-    //changedFiles = [],
-
-    onChange = grunt.util._.debounce(function() {
+    var onChange = grunt.util._.debounce(function() {
       var config = grunt.config('jade.compile.files')[0],
           baseDir = config.cwd,
           src = config.src,
