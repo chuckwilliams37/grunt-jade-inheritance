@@ -3,40 +3,52 @@
 var JadeInheritance = require('jade-inheritance');
 
 module.exports = function(grunt) {
-	var config = grunt.config('jade.compile.files')[0];
+  'use strict';
 
-	if (!config) throw ('Require jade task and propper task architecture');
+  var JadeInheritance = require('jade-inheritance');
 
-	var baseDir = config.cwd,
-		src = config.src,
-		changedFiles = [],
+  module.exports = function(grunt) {
+    //var config = grunt.config('jade.compile.files')[0];
 
-		onChange = grunt.util._.debounce(function() {
-			var dependantFiles = [],
-				jadeSrc, inheritance;
+    //if (!config) throw ('Require jade task and propper task architecture');
 
-			jadeSrc = src.map(function(item) {
-				return baseDir + '/' + item;
-			});
+    var
+    //baseDir = config.cwd,
+    //src = config.src,
+    //changedFiles = [],
 
-			changedFiles.forEach(function(filename) {
-				inheritance = new JadeInheritance(filename, baseDir, {basedir : baseDir});
-				dependantFiles = dependantFiles.concat(inheritance.files);
-			});
+    onChange = grunt.util._.debounce(function() {
+      var config = grunt.config('jade.compile.files')[0],
+          baseDir = config.cwd,
+          src = config.src,
+          changedFiles = [],
+          dependantFiles = [],
+          jadeSrc, inheritance;
 
-			dependantFiles = dependantFiles.filter(function(filename, i) {
-				return grunt.file.isMatch(jadeSrc, baseDir + '/' + filename);
-			});
+      jadeSrc = src.map(function(item) {
+        return baseDir + '/' + item;
+      });
 
-			config.src = dependantFiles;
+      changedFiles.forEach(function(filename) {
+        inheritance = new JadeInheritance(filename, baseDir, {basedir : baseDir});
+        dependantFiles = dependantFiles.concat(inheritance.files);
+      });
 
-			grunt.config('jade.compile.files', [config]);
+      dependantFiles = dependantFiles.filter(function(filename, i) {
+        return grunt.file.isMatch(jadeSrc, baseDir + '/' + filename);
+      });
 
-			changedFiles = [];
-		}, 200);
+      config.src = dependantFiles;
 
-	grunt.event.on('watch', function(event, filepath, watchParam) {
-		changedFiles.push(filepath);
-		onChange();
-	});
+      grunt.config('jade.compile.files', [config]);
+
+      changedFiles = [];
+    }, 200);
+
+    grunt.event.on('watch', function(event, filepath, watchParam) {
+      changedFiles.push(filepath);
+      onChange();
+    });
+  };
+
 };
